@@ -210,8 +210,8 @@ p { max-width: 64ch; text-wrap: pretty; }
 .tile-arrow .ico { width: 18px; height: 18px; }
 .tile:hover .tile-arrow { background: var(--accent); color: var(--on-accent); border-color: var(--accent); transform: rotate(45deg); }
 
-.t-mpc { grid-column: span 8; --ar: 16 / 10; }
-.t-cube { grid-column: span 4; }
+.t-mpc { grid-column: span 6; --ar: 16 / 10; }
+.t-cube { grid-column: span 6; }
 .t-cube .tile-media { flex: 1; aspect-ratio: auto; min-height: 320px; }
 .t-puppets { grid-column: span 7; --ar: 16 / 10; }
 .t-heroes { grid-column: span 5; }
