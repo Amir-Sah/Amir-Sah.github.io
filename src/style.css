@@ -186,8 +186,9 @@ p { max-width: 64ch; text-wrap: pretty; }
 
 /* ---------- home: project tiles (bento) ---------- */
 .tiles {
+  --col-gap: clamp(16px, 2vw, 28px);
   display: grid; grid-template-columns: repeat(12, 1fr);
-  gap: clamp(28px, 3vw, 40px) clamp(16px, 2vw, 28px);
+  gap: clamp(28px, 3vw, 40px) var(--col-gap);
 }
 .tile { position: relative; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
 .tile-media {
@@ -210,20 +211,29 @@ p { max-width: 64ch; text-wrap: pretty; }
 .tile-arrow .ico { width: 18px; height: 18px; }
 .tile:hover .tile-arrow { background: var(--accent); color: var(--on-accent); border-color: var(--accent); transform: rotate(45deg); }
 
-.t-mpc { grid-column: span 6; --ar: 16 / 10; }
-.t-cube { grid-column: span 6; }
-.t-cube .tile-media { flex: 1; aspect-ratio: auto; min-height: 320px; }
-.t-puppets { grid-column: span 7; --ar: 16 / 10; }
-.t-heroes { grid-column: span 5; }
-.t-heroes .tile-media { flex: 1; aspect-ratio: auto; min-height: 320px; background: #f3f1ee; }
-.t-heroes .tile-media img { position: absolute; inset: 0; object-position: top; }
+/* Every row is an even 6 + 6 split and every image is 16:10, so rows share one rhythm. */
+.t-mpc, .t-cube, .t-puppets, .t-heroes { grid-column: span 6; --ar: 16 / 10; }
+.t-heroes .tile-media { background: #f3f1ee; }
+.t-heroes .tile-media img { object-position: top; }
+/* Game jams: one tile, two screenshots aligned to the same two columns as the rows above. */
 .t-jams { grid-column: 1 / -1; }
-.t-jams .tile-media { aspect-ratio: auto; }
-/* flex-grow = width/height of each screenshot, so both render at the same height, uncropped */
-.jam-pair { display: flex; align-items: flex-start; gap: clamp(12px, 1.6vw, 20px); padding: clamp(12px, 1.6vw, 20px); background: var(--surface); }
-.jam-pair img { width: 0; height: auto; border-radius: var(--r-sm); }
-.jam-pair img.vt-rush { flex: 2.3116; }
-.jam-pair img.vt-subject { flex: 1.5859; }
+.t-jams .tile-media { aspect-ratio: auto; overflow: visible; background: none; border: 0; border-radius: 0; }
+.t-jams:hover .tile-media { box-shadow: none; }
+.jam-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--col-gap); }
+.t-jams .jam-pair img {
+  height: auto; aspect-ratio: 16 / 10; object-fit: cover;
+  border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--surface);
+  transition: box-shadow 0.5s var(--ease), border-color 0.3s;
+}
+/* caption: shared title, then one label under each screenshot on the same line */
+.jam-cap { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--col-gap); row-gap: 0; align-items: start; }
+.jam-cap h3 { grid-column: 1; grid-row: 1; }
+.jam-cap .jam-l { grid-column: 1; grid-row: 2; }
+.jam-cap .jam-r { grid-column: 2; grid-row: 2; }
+.jam-cap .tile-arrow { grid-column: 2; grid-row: 1 / 3; justify-self: end; }
+/* keep the hourglass and the mushroom in frame */
+.t-jams .jam-pair img.vt-rush { object-position: left center; }
+.t-jams:hover .jam-pair img { transform: none; box-shadow: var(--tile-shadow); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
 .cube-strip {
   position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 14px;
   background: radial-gradient(120% 90% at 20% 0%, #2d3a2a 0%, #16181c 70%);
@@ -396,8 +406,6 @@ a.paper img { border-radius: 4px; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1023px) {
-  .t-mpc, .t-heroes, .t-puppets, .t-cube { grid-column: span 6; }
-  .t-heroes .tile-media, .t-cube .tile-media { min-height: 0; aspect-ratio: 16 / 10; }
   .cube-strip img:nth-child(2) { translate: none; }
   .gallery figure.w4, .gallery figure.w2 { grid-column: span 3; }
   .sheets { grid-template-columns: repeat(3, 1fr); }
@@ -417,8 +425,10 @@ a.paper img { border-radius: 4px; }
 
   .tiles { grid-template-columns: 1fr; }
   .t-mpc, .t-heroes, .t-puppets, .t-cube, .t-jams { grid-column: 1 / -1; }
-  .jam-pair { flex-direction: column; }
-  .jam-pair img { width: 100%; flex: none !important; }
+  .jam-pair { grid-template-columns: 1fr; }
+  .jam-cap { grid-template-columns: 1fr auto; }
+  .jam-cap .jam-r { grid-column: 1; grid-row: 3; margin-top: 2px; }
+  .jam-cap .tile-arrow { grid-row: 1 / 4; }
   .cube-strip { gap: 6px; padding: 8px; }
 
   .exp, .about, .split, .p-title, .feature, .feature.flip { grid-template-columns: 1fr; }
